@@ -187,7 +187,6 @@ public class Ex34_1 extends Application {
             System.out.println("Update Failed " + ex);
         }
 
-
     }
 
     private void initializeDB() {
