@@ -50,7 +50,7 @@ public class Ex34_1 extends Application {
     private Statement stmt;     // Holds SQL statements
 
 
-    @Override
+    @Override // Override the start method in Application class
     public void start(Stage primaryStage) throws Exception {
 
         // Create Boxes for Labels and Fields
@@ -76,38 +76,29 @@ public class Ex34_1 extends Application {
         btnBox.getChildren().addAll(btnView, btnInsert, btnUpdate, btnClear);
         btnBox.setAlignment(Pos.CENTER);
 
-        // Creatr BorderPane to hold all other boxes
+        // Create BorderPane to hold all other boxes
         BorderPane pane = new BorderPane();
         pane.setTop(lblStatus);     // status field to top
         pane.setCenter(vbox);       // Main Labels and Fields to Center
         pane.setBottom(btnBox);     // Buttons set to bottom
 
-
+        // Create a scene and set it in stage
         Scene scene =  new Scene(pane, 535, 200);
-        primaryStage.setTitle("Chapter 34 Ex.1 - Staff");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        primaryStage.setTitle("Chapter 34 Ex.1 - Staff");   // Set Title
+        primaryStage.setScene(scene);   // Place scene in stage
+        primaryStage.show();    // show stage
 
+        // Initialize Database
         initializeDB();
 
+        // Connect buttons to methods
         btnView.setOnAction(e -> view());
         btnInsert.setOnAction(e -> insert());
         btnClear.setOnAction(e -> clear());
         btnUpdate.setOnAction(e -> update());
     }
 
-    private void view() {
-        String query = "SELECT * FROM staff WHERE ID = '" + txtID.getText().trim() + "'";
-        try {
-            ResultSet rs = stmt.executeQuery(query);
-            loadFields(rs);
-        }
-        catch (SQLException ex) {
-            lblStatus.setText("Query Failed");
-            System.out.println("There is a problem with the query" + ex);
-        }
-    }
-
+    //  sets text in txt fields from respective data in database entry
     private void loadFields(ResultSet rs) throws SQLException {
         if (rs.next()) {
             txtLastName.setText(rs.getString(2));
@@ -132,6 +123,20 @@ public class Ex34_1 extends Application {
         }
     }
 
+    // View takes ID from form to get info from database
+    private void view() {
+        String query = "SELECT * FROM staff WHERE ID = '" + txtID.getText().trim() + "'";
+        try {
+            ResultSet rs = stmt.executeQuery(query);
+            loadFields(rs);
+        }
+        catch (SQLException ex) {
+            lblStatus.setText("Query Failed");
+            System.out.println("There is a problem with the query" + ex);
+        }
+    }
+
+    // insert method takes info from field to make a new entry in database
     private void insert() {
         String insertQuery = "INSERT INTO staff (id, lastName, firstName, mi, address," +
                 "city, state, telephone, email) VALUES ('" + txtID.getText().trim() +
@@ -155,6 +160,7 @@ public class Ex34_1 extends Application {
 
     }
 
+    // void clears form of all text
     private void clear() {
         txtID.setText(null);
         txtLastName.setText(null);
@@ -167,7 +173,8 @@ public class Ex34_1 extends Application {
         txtEmail.setText(null);
         lblStatus.setText(null);
     }
-    
+
+    // updates database entry matching ID with fields from form
     private void update() {
         String updateQuery = "UPDATE staff SET " +
                 " lastName = '" + txtLastName.getText().trim() +
@@ -189,10 +196,13 @@ public class Ex34_1 extends Application {
 
     }
 
+    // Loads driver and connects to database
     private void initializeDB() {
         try {
+            // Loads Driver
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("Driver Loaded\n");
+            // Connects to database
             Connection connection = DriverManager.getConnection
                     ("jdbc:mysql://localhost/javabook", "scott", "tiger");
             System.out.println("Database connected\n");
